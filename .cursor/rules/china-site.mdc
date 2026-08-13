@@ -1,0 +1,44 @@
+---
+description: CHINA promo site — LTR, WeChat, compliance copy, CNY calculator
+globs: china/**
+alwaysApply: false
+---
+
+# CHINA Site (`china/`)
+
+Laravel 11 + Blade + Livewire 3 + Tailwind CSS 4. Locales: **`zh_CN` + `en`**, LTR.
+
+## Compliance (hard)
+
+- Public copy, meta, FAQ, legal stubs: **no** «ICO», **no** «cryptocurrency» (and obvious synonyms in EN/ZH that mean the same).
+- Prefer product/platform/technology framing; escalate wording questions rather than inventing risky terms.
+
+## Design
+
+- Palette: red (luck), gold (wealth), white/sand, black/ink, blue (technology).
+- Fonts: **Noto Sans SC**, **PingFang SC** (Chinese) + **Roboto**, **Inter** (Latin). English uses Roboto/Inter first.
+- Visual: futurism and tech grids, minimalism with traditional cloud motifs and abstract phoenix/dragon luck seals. Layer indexes skip **4** (01, 02, 03, 05…).
+- Hero: full-bleed, brand-first; same hero budget rules as ARAB (no clutter overlays/cards).
+- Section **Technology Stack** instead of Sharia.
+
+## Imagery
+
+- Prefer: Shanghai / Shenzhen skylines, tech abstractions, stylized dragon/phoenix.
+- Never: politically sensitive images, maps with incorrect borders, the number **4** as a marketed count or lucky numeral (tetraphobia). Roadmap “Q4” is a quarter label, not a lucky number.
+
+## Product / UX specifics
+
+- WeChat / QR as primary contact channel (not WhatsApp).
+- Investment calculator: **USD / CNY**; price & FX from Hub settings (fallback `config/site.php`).
+- Testimonials OK; keep sections single-purpose.
+
+## Content & Hub
+
+- `site_key`: `china`. Use `HubClient` + cache + `config/site.php` fallback.
+- Site overrides for CN messengers, tech section, localized strings.
+- On Hub failure: local fallback + queued retry for leads/events.
+
+## Do not
+
+- Port ARAB Sharia / WhatsApp / AED-SAR-QAR flows unchanged.
+- Ship public strings that violate the compliance rule above.

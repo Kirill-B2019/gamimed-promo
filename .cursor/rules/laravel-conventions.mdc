@@ -1,0 +1,35 @@
+---
+description: Shared Laravel/Blade/Livewire, HubClient, cache, and security conventions
+alwaysApply: true
+---
+
+# Laravel Conventions (all apps)
+
+Stack: **Laravel 11**, Blade, Livewire 3 (fronts), Filament 3 (hub), Tailwind CSS 4 (fronts).
+
+## Front apps (`arab/`, `china/`)
+
+- `app/Services/HubClient.php`: content GET + leads/events POST; HTTP retry; never call Hub from Blade directly.
+- Content path: Hub → **cache** (TTL 5–15 min) → `config/site.php` fallback.
+- Leads/events: async best-effort; on failure write local job/log and retry (database queue on the front).
+- Livewire MVP: `InvestmentCalculator`, `ContactForm`, `LocaleSwitcher`.
+- Sections live in `resources/views/sections/`; keep presentation thin — data from HubClient/config.
+- Secrets only in `.env`: `HUB_URL`, `SITE_KEY`, `SITE_SECRET` (or equivalent); never commit tokens.
+
+## Hub
+
+- Version API under `App\Http\Controllers\Api\v1\`.
+- Validate/sanitize all lead & event payloads; store `ip_hash`, not raw IP in analytics when hashing is specified.
+- Filament resources must respect All/Group/Site scope and role policies.
+
+## Security
+
+- CSRF on web forms; Sanctum token only for server-to-Hub calls (not browser-exposed).
+- Rate-limit Hub API; CORS locked to known front origins.
+- No shared DB credentials between Hub and promo apps.
+
+## Code style
+
+- Match existing Laravel structure; prefer framework features over custom frameworks.
+- Do not add Sanity/Strapi or other CMS in MVP — content is Hub-managed.
+- Prefer small, focused changes; don't invent sections/features outside the plan MVP.

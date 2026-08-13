@@ -1,0 +1,40 @@
+---
+description: ARAB promo site — RTL, MENA currencies, Sharia, design constraints
+globs: arab/**
+alwaysApply: false
+---
+
+# ARAB Site (`arab/`)
+
+Laravel 11 + Blade + Livewire 3 + Tailwind CSS 4. Locales: **`ar` + `en`**, default RTL for `ar`.
+
+## Design
+
+- Palette: gold, emerald, white/sand, black/ink (wealth, Islam, prestige).
+- Fonts: **Cairo**, **Tajawal**, **Almarai** (Arabic) + **Montserrat**, **Poppins** (Latin). English uses Poppins/Montserrat first.
+- Visual: minimalism with Islamic geometry, arabesque/calligraphy ornaments, abstract blockchain nodes. No Qur’anic verses as decoration.
+- Hero: full-bleed, brand-first; one headline, one supporting line, one CTA group.
+- No inset/card hero media; no floating badges/overlays on hero.
+- Prefer motion for hierarchy (2–3 intentional motions), not clutter.
+
+## Imagery
+
+- Prefer: modest traditional dress, Dubai/Doha skylines, abstract chain visuals.
+- Never: pigs, alcohol, revealing clothing, idols or symbols that contradict Islam.
+
+## Product / UX specifics
+
+- Section **Sharia** (compliance angle for MENA); WhatsApp as primary messenger CTA.
+- Investment calculator: **USD / AED / SAR / QAR**; price & FX from Hub settings (fallback `config/site.php`).
+- Testimonials allowed; keep first viewport free of stats/schedules/extra promo blocks.
+
+## Content & Hub
+
+- `site_key`: `arab`. Fetch via `HubClient`; never hardcode Hub URLs in views.
+- Site overrides in Hub may differ from CHINA (Sharia vs Tech Stack, messengers, copy).
+- On Hub outage: render from `config/site.php` fallback; still queue leads/events for retry.
+
+## Do not
+
+- Copy CHINA WeChat/QR or CNY-only UX into ARAB.
+- Put ICO/crypto compliance workarounds meant for China into ARAB public copy without product ask.

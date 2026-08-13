@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+@theme {
+    --font-sans: "Tajawal", "Almarai", "Cairo", "Poppins", "Montserrat", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Cairo", "Almarai", "Tajawal", "Montserrat", "Poppins", ui-sans-serif, system-ui, sans-serif;
+
+    --color-ink: #111111;
+    --color-sand: #f5deb3;
+    --color-sand-deep: #ead4a8;
+    --color-gold: #d4af37;
+    --color-gold-bright: #ffd700;
+    --color-emerald: #006b3c;
+    --color-emerald-bright: #00a86b;
+    --color-emerald-deep: #004d2c;
+
+    --background-image-pattern-geom: url("/images/pattern-geometry.svg");
+    --background-image-pattern-calligraphy: url("/images/pattern-calligraphy.svg");
+    --background-image-pattern-blockchain: url("/images/pattern-blockchain.svg");
+    --background-image-pattern-mashrabiya: url("/images/pattern-mashrabiya.svg");
+
+    --animate-rise: rise 0.7s ease-out both;
+    --animate-rise-delay: rise 0.7s ease-out 0.12s both;
+    --animate-rise-delay-2: rise 0.7s ease-out 0.24s both;
+}
+
+html[lang="en"] {
+    --font-sans: "Poppins", "Montserrat", "Cairo", "Tajawal", "Almarai", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Montserrat", "Poppins", "Cairo", "Tajawal", "Almarai", ui-sans-serif, system-ui, sans-serif;
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(0.75rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@layer components {
+    .section-shell {
+        @apply relative py-16 sm:py-24;
+    }
+
+    .bg-pattern-geom,
+    .pattern-geometry {
+        background-image: var(--background-image-pattern-geom);
+        background-repeat: repeat;
+        background-size: 180px 180px;
+    }
+
+    .bg-pattern-calligraphy,
+    .pattern-calligraphy {
+        background-image: var(--background-image-pattern-calligraphy);
+        background-repeat: repeat;
+        background-size: 220px 220px;
+    }
+
+    .bg-pattern-blockchain,
+    .pattern-blockchain {
+        background-image: var(--background-image-pattern-blockchain);
+        background-repeat: repeat;
+        background-size: 240px 240px;
+    }
+
+    .bg-pattern-mashrabiya,
+    .pattern-mashrabiya {
+        background-image: var(--background-image-pattern-mashrabiya);
+        background-repeat: repeat;
+        background-size: 160px 160px;
+    }
+
+    .ornament-calligraphy {
+        background-image: var(--background-image-pattern-calligraphy);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+    }
+
+    .luxury-card {
+        @apply border border-gold/35 bg-sand p-5;
+        box-shadow: 0 12px 32px -24px rgb(17 17 17 / 0.45);
+    }
+
+    .section-inner {
+        @apply mx-auto max-w-6xl px-4 sm:px-6;
+    }
+
+    .section-title {
+        @apply font-display text-3xl font-semibold text-ink sm:text-4xl;
+    }
+
+    .section-lead {
+        @apply mt-4 max-w-2xl text-base leading-relaxed text-ink/75 sm:text-lg;
+    }
+
+    .hero-scrim {
+        background:
+            linear-gradient(to top, rgb(17 17 17 / 0.97) 0%, rgb(17 17 17 / 0.86) 34%, rgb(17 17 17 / 0.35) 62%, transparent 100%),
+            linear-gradient(to left, rgb(17 17 17 / 0.55) 0%, transparent 58%);
+    }
+
+    [dir="rtl"] .hero-scrim {
+        background:
+            linear-gradient(to top, rgb(17 17 17 / 0.97) 0%, rgb(17 17 17 / 0.86) 34%, rgb(17 17 17 / 0.35) 62%, transparent 100%),
+            linear-gradient(to right, rgb(17 17 17 / 0.55) 0%, transparent 58%);
+    }
+
+    .hero-type {
+        text-shadow:
+            0 1px 1px rgb(0 0 0 / 0.75),
+            0 8px 28px rgb(0 0 0 / 0.6);
+    }
+
+    .section-kicker {
+        @apply mb-4 block h-1 w-12 bg-gold;
+    }
+}

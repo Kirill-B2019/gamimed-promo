@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+@theme {
+    --font-sans: "Inter", "Roboto", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Inter", "Noto Sans SC", "PingFang SC", "Roboto", "Hiragino Sans GB", "Microsoft YaHei", ui-sans-serif, system-ui, sans-serif;
+
+    --color-ink: #0a1628;
+    --color-sand: #12243d;
+    --color-sand-deep: #0d1c33;
+    --color-gold: #d4af37;
+    --color-gold-bright: #ffd700;
+    --color-red: #c41e3a;
+    --color-red-bright: #e60012;
+    --color-red-deep: #7f1d1d;
+    --color-blue: #0066cc;
+    --color-blue-bright: #3b82f6;
+    --color-blue-deep: #003366;
+    --color-paper: #ffffff;
+
+    --background-image-pattern-cloud: url("/images/pattern-cloud.svg");
+    --background-image-pattern-phoenix: url("/images/pattern-phoenix.svg");
+    --background-image-pattern-dragon: url("/images/pattern-dragon.svg");
+    --background-image-pattern-tech: url("/images/pattern-tech.svg");
+    --background-image-pattern-lattice: url("/images/pattern-lattice.svg");
+
+    --animate-rise: rise 0.7s ease-out both;
+    --animate-rise-delay: rise 0.7s ease-out 0.12s both;
+    --animate-rise-delay-2: rise 0.7s ease-out 0.24s both;
+}
+
+html[lang="zh-CN"] {
+    --font-sans: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Inter", "Roboto", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Inter", "Roboto", ui-sans-serif, system-ui, sans-serif;
+}
+
+html[lang="en"] {
+    --font-sans: "Roboto", "Inter", "Noto Sans SC", "PingFang SC", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Inter", "Roboto", "Noto Sans SC", "PingFang SC", ui-sans-serif, system-ui, sans-serif;
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(0.75rem);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes luck-sheen {
+    from {
+        background-position: 0% 50%;
+    }
+    to {
+        background-position: 100% 50%;
+    }
+}
+
+@layer components {
+    .section-shell {
+        @apply relative py-16 sm:py-24;
+    }
+
+    .bg-pattern-cloud,
+    .pattern-cloud,
+    .pattern-clouds {
+        background-image: var(--background-image-pattern-cloud);
+        background-repeat: repeat;
+        background-size: 240px 120px;
+    }
+
+    .bg-pattern-phoenix,
+    .pattern-phoenix {
+        background-image: var(--background-image-pattern-phoenix);
+        background-repeat: repeat;
+        background-size: 220px 220px;
+    }
+
+    .bg-pattern-dragon,
+    .pattern-dragon {
+        background-image: var(--background-image-pattern-dragon);
+        background-repeat: repeat;
+        background-size: 220px 220px;
+    }
+
+    .bg-pattern-tech,
+    .pattern-tech {
+        background-image: var(--background-image-pattern-tech);
+        background-repeat: repeat;
+        background-size: 180px 180px;
+    }
+
+    .bg-pattern-lattice,
+    .pattern-lattice {
+        background-image: var(--background-image-pattern-lattice);
+        background-repeat: repeat;
+        background-size: 160px 160px;
+    }
+
+    .ornament-phoenix {
+        background-image: var(--background-image-pattern-phoenix);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+    }
+
+    .ornament-dragon {
+        background-image: var(--background-image-pattern-dragon);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+    }
+
+    .hero-scan {
+        background-image: repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 3px,
+            rgb(255 255 255 / 0.035) 3px,
+            rgb(255 255 255 / 0.035) 5px
+        );
+    }
+
+    .luck-bar {
+        height: 3px;
+        width: 3.25rem;
+        background-image: linear-gradient(90deg, var(--color-red), var(--color-gold));
+        background-size: 200% 100%;
+        animation: luck-sheen 8s linear infinite alternate;
+    }
+
+    .surface-card {
+        @apply relative border border-gold/20 bg-sand p-5 text-paper;
+        box-shadow:
+            0 0 0 1px color-mix(in srgb, var(--color-red) 22%, transparent),
+            0 18px 40px -24px rgb(0 0 0 / 0.55);
+    }
+
+    .surface-card::before,
+    .surface-card::after {
+        content: "";
+        position: absolute;
+        width: 0.7rem;
+        height: 0.7rem;
+        border-color: var(--color-gold);
+        border-style: solid;
+        pointer-events: none;
+    }
+
+    .surface-card::before {
+        top: -1px;
+        left: -1px;
+        border-width: 2px 0 0 2px;
+    }
+
+    .surface-card::after {
+        right: -1px;
+        bottom: -1px;
+        border-width: 0 2px 2px 0;
+    }
+
+    .window-round {
+        background-image: linear-gradient(135deg, var(--color-red), var(--color-gold));
+        @apply rounded-full p-[3px];
+    }
+
+    .section-inner {
+        @apply mx-auto max-w-6xl px-4 sm:px-6;
+    }
+
+    .section-title {
+        @apply font-display text-3xl font-semibold tracking-tight text-paper sm:text-4xl;
+    }
+
+    .section-lead {
+        @apply mt-4 max-w-2xl text-base leading-relaxed text-paper/75 sm:text-lg;
+    }
+
+    .field-input {
+        @apply mt-2 w-full border border-gold/25 bg-ink px-3 py-2 text-paper outline-none transition focus:border-gold focus:ring-1 focus:ring-gold/40;
+    }
+
+    .hero-scrim {
+        background: linear-gradient(
+            90deg,
+            rgb(10 22 40 / 0.97) 0%,
+            rgb(10 22 40 / 0.9) 36%,
+            rgb(10 22 40 / 0.42) 62%,
+            rgb(10 22 40 / 0.08) 100%
+        );
+    }
+
+    .hero-type {
+        text-shadow:
+            0 1px 2px rgb(0 0 0 / 0.85),
+            0 10px 32px rgb(0 0 0 / 0.7);
+    }
+
+    .cta-luck {
+        @apply inline-flex items-center bg-gradient-to-r from-red to-gold px-5 py-3 text-sm font-semibold text-ink transition hover:from-red-bright hover:to-gold-bright;
+    }
+
+    #technology {
+        background-color: color-mix(in srgb, var(--color-sand) 90%, var(--color-blue) 10%);
+        box-shadow: inset 6px 0 0 0 var(--color-blue);
+    }
+}

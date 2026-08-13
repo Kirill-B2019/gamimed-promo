@@ -1,0 +1,46 @@
+---
+description: Hub Filament admin, site scopes, and public API contract for fronts
+globs: hub/**
+alwaysApply: false
+---
+
+# Hub (`hub/`)
+
+Laravel + **Filament 3**: control plane, API, and DB of record for `arab` and `china`.
+
+## Models (MVP)
+
+`Site`, `SiteGroup`, `ContentSection`, `ContactMessage`, `AnalyticsEvent`, `User` (+ pivots / settings as needed).
+
+## Filament
+
+- Resources: Sites, Groups, Content sections, Leads inbox, Settings (FX rates, pre-sale price, feature flags).
+- Content: bulk edit by **group** + **site override**; locale fields for `ar` / `zh_CN` / `en`.
+- Every list/dashboard: scope switcher **All / Group / Site**.
+- Stats widgets: period filter; funnel `cta_click` → `calculator_use` → `contact_submit` (plus `page_view`, `whitepaper_download`).
+
+## Roles
+
+| Role | Access |
+|------|--------|
+| Super admin | All sites/groups |
+| Site manager | Assigned `site_id` only |
+| Viewer | Read-only stats/leads in scope |
+
+Enforce scope in queries and policies; never leak other sites' leads/events.
+
+## API (`/api/v1`)
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /content` | Published sections for authenticated site |
+| `POST /leads` | Contact / lead intake |
+| `POST /events` | First-party analytics events |
+
+- Auth: Bearer **site** Sanctum token; rate-limit; CORS allowlist = front domains only.
+- Events: `site_id`, `locale`, `path`, `meta` JSON, `ip_hash`, `created_at`.
+- Do not expose Filament/admin routes on the public API surface.
+
+## Ops mindset
+
+Prefer deploy behind IP allowlist/VPN; enable 2FA for Filament where available.

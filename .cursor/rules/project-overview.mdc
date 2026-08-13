@@ -1,0 +1,42 @@
+---
+description: Monorepo overview — hub + arab + china, Hub as source of truth
+alwaysApply: true
+---
+
+# Pre-ICO Promo Monorepo
+
+Three Laravel apps in one repo:
+
+| App | Path | Role |
+|-----|------|------|
+| Hub | `hub/` | Filament 3 admin, JSON API, DB of record |
+| ARAB | `arab/` | Promo (ar+en RTL), VDS UAE/EU + Cloudflare |
+| CHINA | `china/` | Promo (zh_CN+en LTR), VDS HK/SG |
+
+## Architecture
+
+- Hub owns sites, groups, content, leads, analytics, settings.
+- Fronts talk to Hub over HTTPS JSON API (Sanctum **site** token). Never share DB with fronts.
+- Content on fronts: `HubClient` → cache (5–15 min TTL) → fallback `config/site.php`.
+- Leads/events: best-effort POST to Hub; on failure queue/log + retry on the front.
+
+## Sites & groups
+
+- `sites`: `arab`, `china` (slug, domain, locales, API token, status).
+- `site_groups`: arbitrary (e.g. `all-preico`, `mena`, `apac`); M2M with sites.
+- Filament context switcher: **All / Group / Site** on resources and dashboard.
+
+## Content model
+
+- Structured sections: `section_key` + JSON payload; status `draft|published`.
+- **Global/Group** applies to all sites in scope; **Site override** for ARAB/CHINA-only fields.
+- Locales stored in Hub (`ar` / `zh_CN` / `en`).
+
+## Compliance
+
+- CHINA public copy: no «ICO» / «cryptocurrency» wording.
+- External analytics (GA4, Yandex, Baidu) supplement Hub first-party events; Hub is admin truth.
+
+## Out of MVP
+
+WeChat Mini Program, headless CMS, live FX API, AMP, real KYC/audit SSO beyond site tokens.

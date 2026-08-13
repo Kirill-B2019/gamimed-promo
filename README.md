@@ -1,32 +1,32 @@
 # GAMIMED Pre-ICO Promo (Hub + ARAB + CHINA)
 
-Monorepo with three Laravel 11 apps. The Hub is the database of record; promo fronts never share its DB.
+Monorepo из трёх приложений на Laravel 11. Hub — база данных истины; промо-фронты её БД не используют.
 
-| App | Path | Role | Typical VDS |
-|-----|------|------|-------------|
-| **Hub** | `hub/` | Filament 3 admin, JSON API, DB of record | EU or SG (reachable from both fronts) |
-| **ARAB** | `arab/` | Promo `ar`+`en` RTL | UAE or EU + Cloudflare |
-| **CHINA** | `china/` | Promo `zh_CN`+`en` LTR | HK or SG |
+| Приложение | Путь | Роль | Типичный VDS |
+|------------|------|------|--------------|
+| **Hub** | `hub/` | Админка Filament 3, JSON API, БД истины | EU или SG (доступен с обоих фронтов) |
+| **ARAB** | `arab/` | Промо `ar`+`en`, RTL | ОАЭ или EU + Cloudflare |
+| **CHINA** | `china/` | Промо `zh_CN`+`en`, LTR | HK или SG |
 
 ```mermaid
 flowchart TB
   subgraph hubVds [Hub VDS]
-    Hub["hub Filament + API + DB"]
+    Hub["hub Filament + API + БД"]
   end
   subgraph arabVds [ARAB VDS]
-    Arab["arab promo"]
+    Arab["arab промо"]
   end
   subgraph chinaVds [CHINA VDS]
-    China["china promo"]
+    China["china промо"]
   end
-  AdminUser["Admin"] --> Hub
-  UserArab["AR audience"] --> Arab
-  UserChina["CN audience"] --> China
-  Arab -->|"GET content / POST leads+events"| Hub
-  China -->|"GET content / POST leads+events"| Hub
+  AdminUser["Админ"] --> Hub
+  UserArab["Аудитория AR"] --> Arab
+  UserChina["Аудитория CN"] --> China
+  Arab -->|"GET контент / POST лиды+события"| Hub
+  China -->|"GET контент / POST лиды+события"| Hub
 ```
 
-## Local development
+## Локальная разработка
 
 ```bash
 # Hub
@@ -34,107 +34,109 @@ cd hub && cp .env.example .env && php artisan key:generate
 php artisan migrate --seed
 php artisan serve --port=8000
 
-# ARAB (separate terminal)
+# ARAB (отдельный терминал)
 cd arab && cp .env.example .env && php artisan key:generate
-# SITE_SECRET = contents of hub/storage/app/site-tokens/arab.token
+# SITE_SECRET = содержимое hub/storage/app/site-tokens/arab.token
 php artisan migrate
 npm install && npm run build
 php artisan serve --port=8001
 php artisan queue:work
 
-# CHINA (separate terminal)
+# CHINA (отдельный терминал)
 cd china && cp .env.example .env && php artisan key:generate
-# SITE_SECRET = contents of hub/storage/app/site-tokens/china.token
+# SITE_SECRET = содержимое hub/storage/app/site-tokens/china.token
 php artisan migrate
 npm install && npm run build
 php artisan serve --port=8002
 php artisan queue:work
 ```
 
-Default Hub login: `HUB_ADMIN_EMAIL` / `HUB_ADMIN_PASSWORD` in `hub/.env`.
+Логин в Hub по умолчанию: `HUB_ADMIN_EMAIL` / `HUB_ADMIN_PASSWORD` в `hub/.env`.
 
-## Production: three VDS
+В `.env.example` фронтов указан MySQL (`ar` / `ch`). Для SQLite задайте `DB_CONNECTION=sqlite` и создайте `database/database.sqlite`.
+
+## Продакшен: три VDS
 
 ### 1. Hub (EU/SG)
 
-- PHP 8.2+, Composer, nginx (or Caddy), SQLite or MySQL, `php artisan queue:work` if you add Hub jobs later.
-- Public surface: `/api/v1/*` (HTTPS) and `/up` (health). Put `/admin` behind VPN **and** `HUB_ADMIN_ALLOWED_IPS`.
-- Do not expose Filament on the same hostname as a public marketing site.
+- PHP 8.2+, Composer, nginx (или Caddy), SQLite или MySQL, `php artisan queue:work` — если позже появятся jobs на Hub.
+- Публичная поверхность: `/api/v1/*` (HTTPS) и `/up` (health). `/admin` — за VPN **и** `HUB_ADMIN_ALLOWED_IPS`.
+- Не выставляйте Filament на том же hostname, что и маркетинговый сайт.
 
-**Hub `.env` (required)**
+**Hub `.env` (обязательно)**
 
-| Variable | Purpose |
-|----------|---------|
-| `APP_URL` | Canonical Hub URL, e.g. `https://admin.example.com` |
+| Переменная | Назначение |
+|------------|------------|
+| `APP_URL` | Канонический URL Hub, например `https://admin.example.com` |
 | `APP_KEY` | `php artisan key:generate` |
-| `HUB_ADMIN_EMAIL` / `HUB_ADMIN_PASSWORD` | First super-admin (seeder) |
-| `CORS_ALLOWED_ORIGINS` | Front origins, comma-separated (`https://arab.example.com,https://china.example.com`) |
-| `ARAB_DOMAIN` / `CHINA_DOMAIN` | Site domains stored on seed / Filament Sites |
-| `HUB_ADMIN_ALLOWED_IPS` | Office/VPN egress IPs or CIDR. **Empty = open admin (local only).** |
-| `HUB_TRUSTED_PROXIES` | `*` when nginx/Cloudflare terminate TLS in front of PHP |
-| `HUB_ADMIN_2FA` | `true` in production — TOTP (or recovery codes) every Filament session |
+| `HUB_ADMIN_EMAIL` / `HUB_ADMIN_PASSWORD` | Первый super-admin (сидер) |
+| `CORS_ALLOWED_ORIGINS` | Origin’ы фронтов через запятую (`https://arab.example.com,https://china.example.com`) |
+| `ARAB_DOMAIN` / `CHINA_DOMAIN` | Домены сайтов в сидере / Filament Sites |
+| `HUB_ADMIN_ALLOWED_IPS` | IP офиса/VPN или CIDR. **Пусто = админка открыта (только локально).** |
+| `HUB_TRUSTED_PROXIES` | `*` если TLS терминируют nginx/Cloudflare перед PHP |
+| `HUB_ADMIN_2FA` | `true` в проде — TOTP (или recovery-коды) на каждую сессию Filament |
 
-### 2. ARAB (UAE/EU + Cloudflare)
+### 2. ARAB (ОАЭ/EU + Cloudflare)
 
-- Same PHP stack. Database queue worker **must** run (`php artisan queue:work`) so Hub lead/event retries fire.
-- Point DNS at Cloudflare; proxy orange-cloud; SSL Full (strict) once origin certs exist.
+- Тот же стек PHP. Воркер очереди **обязан** работать (`php artisan queue:work`), иначе retry лидов и событий на Hub не уйдут.
+- DNS на Cloudflare; прокси (оранжевое облако); SSL Full (strict) после появления origin-сертификата.
 
-**ARAB `.env` (required)**
+**ARAB `.env` (обязательно)**
 
-| Variable | Purpose |
-|----------|---------|
-| `APP_URL` | Public origin, e.g. `https://arab.example.com` |
-| `HUB_URL` | Hub origin, e.g. `https://admin.example.com` (no trailing slash) |
+| Переменная | Назначение |
+|------------|------------|
+| `APP_URL` | Публичный origin, например `https://arab.example.com` |
+| `HUB_URL` | Origin Hub, например `https://admin.example.com` (без слэша в конце) |
 | `SITE_KEY` | `arab` |
-| `SITE_SECRET` | Sanctum **site** token from Hub (never commit; never expose to the browser) |
-| `HUB_CONTENT_CACHE_TTL` | 300–900 seconds (default 600) |
+| `SITE_SECRET` | Sanctum-токен **сайта** из Hub (не коммитить; не отдавать в браузер) |
+| `HUB_CONTENT_CACHE_TTL` | 300–900 секунд (по умолчанию 600) |
 
-Optional: `GA4_MEASUREMENT_ID`, `YANDEX_METRIKA_ID`, `BAIDU_ANALYTICS_ID`, `SEO_OG_IMAGE`.
+Опционально: `GA4_MEASUREMENT_ID`, `YANDEX_METRIKA_ID`, `BAIDU_ANALYTICS_ID`, `SEO_OG_IMAGE`.
 
 ### 3. CHINA (HK/SG)
 
-Same as ARAB with `SITE_KEY=china` and that site’s token. Typical extra: `BAIDU_ANALYTICS_ID`. Public copy must stay free of «ICO» / «cryptocurrency» wording.
+Как ARAB, но `SITE_KEY=china` и токен этого сайта. Обычно ещё `BAIDU_ANALYTICS_ID`. В публичных текстах нельзя «ICO» / «cryptocurrency».
 
-Keep a queue worker running on this VDS as well.
+На этом VDS тоже держите queue worker.
 
-## API keys (site tokens)
+## API-ключи (токены сайтов)
 
-1. On Hub: `php artisan migrate --seed` **or** Filament → Sites → **Issue API token**.
-2. Seeder writes gitignored files: `hub/storage/app/site-tokens/arab.token` and `china.token`.
-3. Paste each token into the matching front `SITE_SECRET`.
-4. Fronts send `Authorization: Bearer {SITE_SECRET}` only from the server (`HubClient`). Rotate a token from Filament if it leaks; then update that front’s `.env` and reload PHP.
+1. На Hub: `php artisan migrate --seed` **или** Filament → Sites → **Issue API token**.
+2. Сидер пишет gitignored-файлы: `hub/storage/app/site-tokens/arab.token` и `china.token`.
+3. Вставьте каждый токен в `SITE_SECRET` соответствующего фронта.
+4. Фронты шлют `Authorization: Bearer {SITE_SECRET}` только с сервера (`HubClient`). Если токен утёк — перевыпустите в Filament, обновите `.env` фронта и перезагрузите PHP.
 
-CORS must list the exact front origins. Tokens are per site, not shared between ARAB and CHINA.
+В CORS должны быть точные origin’ы фронтов. Токены раздельные: ARAB и CHINA не делят один ключ.
 
-## Cloudflare (ARAB, optional on others)
+## Cloudflare (ARAB, на остальных по желанию)
 
 - DNS A/AAAA → VDS, proxied.
-- SSL/TLS: Full (strict) with an origin certificate on nginx.
-- Page Rules / Cache: bypass `/track` (POST) and Livewire endpoints; cache static `build/assets`.
-- If Hub is also behind a proxy, set `HUB_TRUSTED_PROXIES=*` so IP allowlisting sees the client (or `CF-Connecting-IP` via trusted proxies).
+- SSL/TLS: Full (strict) и origin-сертификат на nginx.
+- Page Rules / Cache: не кэшировать `POST /track` и эндпоинты Livewire; кэшировать статику `build/assets`.
+- Если Hub тоже за прокси, задайте `HUB_TRUSTED_PROXIES=*`, чтобы IP-allowlist видел клиента (или `CF-Connecting-IP` через trusted proxies).
 
-## Content publish checklist (Hub)
+## Чеклист публикации контента (Hub)
 
-1. Open Filament `/admin` (VPN + allowlisted IP; complete 2FA if enabled).
-2. Set scope to **All**, a **group**, or a **site** (ARAB / CHINA).
-3. Content sections: edit payload per locale (`ar` / `zh_CN` / `en`), set status **published**. Site overrides win over group/global for that site.
-4. Settings: pre-sale price (USD), FX rates, feature flags.
-5. Confirm CHINA public strings still avoid ICO / cryptocurrency wording.
-6. Fronts pick up content within `HUB_CONTENT_CACHE_TTL` (5–15 min). To force: `php artisan cache:clear` on the front VDS.
-7. Smoke-test `/ar` and `/zh_CN`, contact form, calculator, `/sitemap.xml`, `/privacy`, `/terms`.
-8. Confirm Hub Stats shows `page_view` / CTA / lead events after the front queue worker has run.
+1. Откройте Filament `/admin` (VPN + IP из allowlist; пройдите 2FA, если включена).
+2. Выберите scope: **All**, **группу** или **сайт** (ARAB / CHINA).
+3. Секции: правьте payload по локалям (`ar` / `zh_CN` / `en`), статус **published**. Site override побеждает group/global для этого сайта.
+4. Settings: цена pre-sale (USD), курсы FX, feature flags.
+5. Проверьте, что публичные строки CHINA по-прежнему без ICO / cryptocurrency.
+6. Фронты подхватят контент за `HUB_CONTENT_CACHE_TTL` (5–15 мин). Принудительно: `php artisan cache:clear` на VDS фронта.
+7. Смоук: `/ar` и `/zh_CN`, форма, калькулятор, `/sitemap.xml`, `/privacy`, `/terms`.
+8. В Hub Stats должны появиться `page_view` / CTA / lead после отработки queue worker на фронте.
 
-## Front SEO & legal
+## SEO и юридические страницы фронтов
 
-Each promo app serves:
+Каждое промо-приложение отдаёт:
 
 - Meta description, canonical, hreflang, Open Graph
-- `/robots.txt` and `/sitemap.xml`
-- Privacy / terms stubs under `/{locale}/privacy` and `/{locale}/terms` (placeholder copy pending legal review)
+- `/robots.txt` и `/sitemap.xml`
+- Заглушки privacy / terms: `/{locale}/privacy` и `/{locale}/terms` (тексты до юридического review)
 
-External analytics (GA4, Yandex, Baidu) are optional hooks and **do not** replace Hub first-party events.
+Внешняя аналитика (GA4, Яндекс, Baidu) — опциональные хуки и **не заменяет** first-party события Hub.
 
-## Per-app docs
+## Документация приложений
 
 - [hub/README.md](hub/README.md)
 - [arab/README.md](arab/README.md)
